@@ -1,71 +1,56 @@
-#include <stdio.h>
+/**
+ * @file playground.cpp
+ * @brief quick tests for openGL
+ * @author Antonio Teran, teran@mit.edu
+ * @date December 04, 2018
+ */
+
+#include <iostream>
 #include <stdlib.h>
 
 #include <GL/glew.h>
-
-#include <GLFW/glfw3.h>
-GLFWwindow* window;
-
+#include <GLFW/glfw3.h> // for handling window and keyboard
 #include <glm/glm.hpp>
-using namespace glm;
 
-int main( void )
-{
-	// Initialise GLFW
-	if( !glfwInit() )
-	{
-		fprintf( stderr, "Failed to initialize GLFW\n" );
-		getchar();
-		return -1;
-	}
+int main() {
 
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  // initialize GLFW
+  glewExperimental = true;
+  if ( !glfwInit() ) {
+    fprintf( stderr, "Failed to initialize GLFW\n" );
+    return (-1);
+  }
 
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( 1024, 768, "Playground", NULL, NULL);
-	if( window == NULL ){
-		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
+  // Create OpenGL windows:
+  glfwWindowHint(GLFW_SAMPLES, 4);               /* 4x antialiasing */
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); /* want OpenGL 3.3 */
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Initialize GLEW
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
+  GLFWwindow *window;
+  window = glfwCreateWindow( 1024, 768, "Custom Playground", NULL, NULL );
+  if ( window == NULL ) {
+    fprintf( stderr, "Failed to open GLFW window." );
+    glfwTerminate();
+    return (-1);
+  }
 
-	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+  glfwMakeContextCurrent( window ); /* initialize GLEW */
+  if ( glewInit() != GLEW_OK ) {
+    fprintf( stderr, "Failed to initialize GLEW\n" );
+    return (-1);
+  }
 
-	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+  // Ensure we can capture the escape key
+  glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	do{
-		glClear(GL_COLOR_BUFFER_BIT);
+  do {
+    glClear( GL_COLOR_BUFFER_BIT ); // clear the screen
+    // draw nothing...
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  } while ( glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && 
+      glfwWindowShouldClose(window) == 0 );
 
-		// Draw nothing, see you in tutorial 2 !
-
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
-
-	// Close OpenGL window and terminate GLFW
-	glfwTerminate();
-
-	return 0;
+  return (0);
 }
-
